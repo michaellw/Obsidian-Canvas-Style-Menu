@@ -1,0 +1,13 @@
+{
+	"id": "canvas-style-menu",
+	"name": "Canvas Style Menu",
+	"version": "0.0.1",
+	"minAppVersion": "1.1.0",
+	"description": "Customize canvas styles seamlessly through the canvas menu and support styles extension using CSS snippets.",
+	"author": "Michaellw",
+	"authorUrl": "https://github.com/Michaellw",
+	"fundingUrl": {
+		"Buy Me a Coffee": "https://www.buymeacoffee.com/michaellw"
+	},
+	"isDesktopOnly": false
+}

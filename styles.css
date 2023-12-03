@@ -1,0 +1,57 @@
+/* cs-border-none */
+.canvas-node.cs-border-none .canvas-node-container {
+  border: none;
+  box-shadow: none;
+}
+/* cs-border-dashed */
+.canvas-node.cs-border-dashed .canvas-node-container {
+  border: 2px dashed rgba(var(--canvas-color), 0.5);
+  box-shadow: none;
+}
+
+/* cs-bg-transparent */
+.canvas-node.cs-bg-transparent .canvas-node-container {
+  background-color: transparent;
+}
+/* cs-bg-opacity-0 */
+.canvas-node.cs-bg-opacity-0 .canvas-node-container {
+  background-color: transparent;
+}
+.canvas-node.cs-bg-opacity-0.is-themed .canvas-node-content {
+  background-color: rgba(var(--canvas-color), 0);
+}
+
+/* cs-rotate-right-45 */
+.canvas-node.cs-rotate-right-45 .canvas-node-container {
+  transform: rotate(45deg);
+}
+/* cs-rotate-right-90 */
+.canvas-node.cs-rotate-right-90 .canvas-node-container {
+  transform: rotate(90deg);
+}
+/* cs-rotate-left-45 */
+.canvas-node.cs-rotate-left-45 .canvas-node-container {
+  transform: rotate(-45deg);
+}
+/* cs-rotate-left-90 */
+.canvas-node.cs-rotate-left-90 .canvas-node-container {
+  transform: rotate(-90deg);
+}
+.canvas-node .canvas-node-label {
+  display: none;
+}
+
+/* cs-highlight */
+.canvas-node.cs-highlight .canvas-node-container {
+  box-shadow: 0 0 5px 5px rgb(var(--canvas-color)) !important;
+}
+
+/* cs-shape-circle */
+.canvas-node.cs-shape-circle .canvas-node-container {
+  border-radius: 50%;
+}
+.canvas-node.cs-shape-circle .canvas-node-container .markdown-preview-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
