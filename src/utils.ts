@@ -4,7 +4,6 @@ import CanvasStyleMenuPlugin from "./main";
 const handleMultiNodes = (canvas: Canvas, allNodes: boolean, subMenuConfig: SubMenuItem[], menuItemType: string, cssClass: string, onRightClick: boolean) => {
     const nodes = allNodes ? Array.from(canvas.nodes.values()) : Array.from(canvas.selection) as any[];
     const canvasData = canvas.getData();
-
     if (nodes && nodes.length > 0) {
         for (const node of nodes) {
             const nodeData = canvasData.nodes.find((t: any) => t.id === node.id);
@@ -27,7 +26,6 @@ const handleMultiNodes = (canvas: Canvas, allNodes: boolean, subMenuConfig: SubM
 
 export const handleMultiNodesViaNodes = (canvas: Canvas, nodes: CanvasNode[], subMenuConfig: SubMenuItem[], menuItemType: string, cssClass: string, onRightClick: boolean) => {
     const canvasData = canvas.getData();
-
     if (nodes && nodes.length > 0) {
         for (const node of nodes) {
             const nodeData = canvasData.nodes.find((t: any) => t.id === node.id);
@@ -50,6 +48,7 @@ export const handleMultiNodesViaNodes = (canvas: Canvas, nodes: CanvasNode[], su
 export const handleSingleNode = (node: CanvasNode, subMenuConfig: SubMenuItem[], menuItemType: string, cssClass: string, onRightClick: boolean) => {
     const canvasData = node.canvas.getData();
     const nodeData = canvasData.nodes.find((t: any) => t.id === node.id);
+    const edgeData = canvasData.edges.find((t: any) => t.id === node.id);
     if (subMenuConfig === null) {
         property = menuItemType;
     } else property = generateClassToPropertyMap(subMenuConfig, cssClass);
@@ -60,6 +59,12 @@ export const handleSingleNode = (node: CanvasNode, subMenuConfig: SubMenuItem[],
             delete nodeData[property]; //Remove the corresponding property from the canvas file
         } else nodeData[property] = cssClass;
     }
+    if (property && edgeData) {
+        if (onRightClick) {
+            // edgeData[property] = false; //Keep the properties in the canvas file
+            delete edgeData[property]; //Remove the corresponding property from the canvas file
+        } else edgeData[property] = cssClass;
+    }
     node.canvas.setData(canvasData);
     node.canvas.requestSave(true, true);
 };
@@ -68,10 +73,12 @@ const createHandleContextMenu = (section: string, menuConfig: MenuItem[], subMen
     return (menu: Menu) => {
         menuConfig.forEach((memuItem) => {
             if (toggleMenu.includes(memuItem.type)) return;
-            menu.addItem((item: MenuItem) => {
-                const subMenu = item.setSection(section).setTitle(memuItem.title).setIcon(memuItem.icon).setSubmenu();
-                handleMenu(subMenu, subMenuConfig, callback, memuItem.type);
-            });
+            if (memuItem.cat !== 'edge') {
+                menu.addItem((item: MenuItem) => {
+                    const subMenu = item.setSection(section).setTitle(memuItem.title).setIcon(memuItem.icon).setSubmenu();
+                    handleMenu(subMenu, subMenuConfig, callback, memuItem.type);
+                });
+            }
         });
     };
 };
@@ -128,7 +135,6 @@ export function toObjectArray(array: MenuItem[]) {
 
 export function generateClassToPropertyMap(subMenuConfig: SubMenuItem[], cssClass: string): { [key: string]: string } {
     const classToPropertyMap: { [key: string]: string } = {};
-
     subMenuConfig.forEach((subMenuItem) => {
         if (subMenuItem.type && !classToPropertyMap[subMenuItem.class]) {
             classToPropertyMap[subMenuItem.class] = subMenuItem.type;
@@ -145,7 +151,22 @@ export const getToggleMenuItemsClass = (types: string[], items: MenuItem[]): (st
     });
 };
 
-export const getMenuItemType = (cssClass: string, items: MenuItem[]): string | null => {
+export const getItemProperty = (cssClass: string, items: MenuItem[], property: string): string | null => {
   const menuItem = items.find((item) => item.class === cssClass);
-  return menuItem ? menuItem.type : null;
+  return menuItem ? menuItem[property] : null;
 };
+
+export async function modifyClassOnElements(addOrRemove: string, contentEl: HTMLElement, className: string, propertyValue: string): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 1));
+    const elements = contentEl.getElementsByClassName(className) as HTMLCollectionOf<HTMLElement>;
+
+    for (let i = 0; i < elements.length; i++) {
+        const element = elements[i];
+        if (addOrRemove === 'add') {
+            element.classList.add(propertyValue);
+        }
+        if (addOrRemove === 'remove') {
+            element.classList.remove(propertyValue);
+        }
+    }
+}

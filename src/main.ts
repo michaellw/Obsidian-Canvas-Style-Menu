@@ -1,6 +1,7 @@
 import { addIcon, Canvas, CanvasNode, CanvasView, Menu, Plugin, setIcon, setTooltip } from 'obsidian';
 import { around } from 'monkey-around';
 import CanvasStyle from "./CanvasStyle";
+import { menuItems, subMenuItems, customIcons } from "./memuConfigs"
 import {
     handleMenu,
     handleMultiNodesViaNodes,
@@ -10,11 +11,14 @@ import {
     refreshAllCanvasView,
     toObjectArray,
     getToggleMenuItemsClass,
-    getMenuItemType
+    getItemProperty,
+    modifyClassOnElements
 } from "./utils";
 import CanvasStyleMenuSettingTab from "./setting";
 
 interface MenuItem {
+    cat: string;
+    selector: string;
     class: string;
     type: string;
     icon: string;
@@ -22,10 +26,16 @@ interface MenuItem {
 }
 
 interface SubMenuItem {
+    selector: string;
     class: string;
     type: string;
     icon: string;
     title: string;
+}
+
+interface Icon {
+    iconName: string;
+    svgContent: string;
 }
 
 interface MyPluginSettings {
@@ -34,29 +44,9 @@ interface MyPluginSettings {
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-    menuItems: [
-        "{ class: 'cs-border', type: 'border', icon: 'box-select', title: 'Border' }",
-        "{ class: 'cs-bg', type: 'bg', icon: 'paintbrush', title: 'Background' }",
-        "{ class: 'cs-rotate', type: 'rotate', icon: 'rotate-cw', title: 'Rotate' }",
-        "{ class: 'cs-shape', type: 'shape', icon: 'diamond', title: 'Shape' }",
-        "{ class: 'cs-highlight', type: 'highlight', icon: 'star', title: 'Highlight' }",
-        "{ class: 'cs-extra', type: 'extra', icon: 'more-horizontal', title: 'Extra' }",
-    ],
-    subMenuItems: [
-        "{ class: 'cs-border-none', type: 'border', icon: 'text', title: 'No border' }",
-        "{ class: 'cs-border-dashed', type: 'border', icon: 'box-select', title: 'Dashed' }",
-        "{ class: 'cs-border-default', type: 'border', icon: 'eraser', title: 'Default' }",
-        "{ class: 'cs-bg-transparent', type: 'bg', icon: 'flask-conical-off', title: 'Transparent' }",
-        "{ class: 'cs-bg-opacity-0', type: 'bg', icon: 'paint-bucket', title: 'Opacity 0' }",
-        "{ class: 'cs-bg-default', type: 'bg', icon: 'eraser', title: 'Default' }",
-        "{ class: 'cs-rotate-right-45', type: 'rotate', icon: 'redo', title: 'Right 45' }",
-        "{ class: 'cs-rotate-right-90', type: 'rotate', icon: 'redo', title: 'Right 90' }",
-        "{ class: 'cs-rotate-left-45', type: 'rotate', icon: 'undo', title: 'Left 45' }",
-        "{ class: 'cs-rotate-left-90', type: 'rotate', icon: 'undo', title: 'Left 90' }",
-        "{ class: 'cs-rotate-default', type: 'rotate', icon: 'eraser', title: 'Default' }",
-        "{ class: 'cs-shape-circle', type: 'shape', icon: 'circle', title: 'Circle' }",
-        "{ class: 'cs-shape-default', type: 'shape', icon: 'eraser', title: 'Default' }",
-    ]
+    menuItems,
+    subMenuItems,
+    customIcons,
 }
 
 export default class CanvasStyleMenuPlugin extends Plugin {
@@ -109,8 +99,13 @@ export default class CanvasStyleMenuPlugin extends Plugin {
     }
 
     registerCustomIcons() {
-        addIcon("fold-vertical", `<g id="surface1"><path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 12 22.000312 L 12 16.000312 " transform="matrix(4.166667,0,0,4.166667,0,0)"/><path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 12 7.999687 L 12 1.999687 " transform="matrix(4.166667,0,0,4.166667,0,0)"/><path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 4.000312 12 L 1.999687 12 " transform="matrix(4.166667,0,0,4.166667,0,0)"/><path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 10.000312 12 L 7.999687 12 " transform="matrix(4.166667,0,0,4.166667,0,0)"/><path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 16.000312 12 L 13.999688 12 " transform="matrix(4.166667,0,0,4.166667,0,0)"/><path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 22.000312 12 L 19.999688 12 " transform="matrix(4.166667,0,0,4.166667,0,0)"/><path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 15 19.000312 L 12 16.000312 L 9 19.000312 " transform="matrix(4.166667,0,0,4.166667,0,0)"/><path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 15 4.999687 L 12 7.999687 L 9 4.999687 " transform="matrix(4.166667,0,0,4.166667,0,0)"/></g>`);
-        addIcon("unfold-vertical", `<g id="surface1"><path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 12 22.000312 L 12 16.000312 " transform="matrix(4.166667,0,0,4.166667,0,0)"/><path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 12 7.999687 L 12 1.999687 " transform="matrix(4.166667,0,0,4.166667,0,0)"/><path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 4.000312 12 L 1.999687 12 " transform="matrix(4.166667,0,0,4.166667,0,0)"/><path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 10.000312 12 L 7.999687 12 " transform="matrix(4.166667,0,0,4.166667,0,0)"/><path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 16.000312 12 L 13.999688 12 " transform="matrix(4.166667,0,0,4.166667,0,0)"/><path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 22.000312 12 L 19.999688 12 " transform="matrix(4.166667,0,0,4.166667,0,0)"/><path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 15 19.000312 L 12 22.000312 L 9 19.000312 " transform="matrix(4.166667,0,0,4.166667,0,0)"/><path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 15 4.999687 L 12 1.999687 L 9 4.999687 " transform="matrix(4.166667,0,0,4.166667,0,0)"/></g>`);
+        const jsonIcons = JSON.stringify(this.settings.customIcons);
+        const parsedIcons: Icon[] = JSON.parse(jsonIcons);
+        parsedIcons.forEach((icon: string) => {
+            const iconName = icon.iconName;
+            const svgContent = icon.svgContent.replace(/( width| height)="(\d+)"/g, '$1="100%"');
+            addIcon(iconName, svgContent);
+        })
     }
 
     patchCanvasMenu() {
@@ -134,14 +129,33 @@ export default class CanvasStyleMenuPlugin extends Plugin {
                     function (...args: any) {
                         const result = next.call(this, ...args);
 
-                        const createMenuButton = (cssClass: string, tooltip: string, icon: string) => {
-                            if (this.menuEl.querySelector(`.${cssClass}-menu-item`)) return result;
-                            const buttonEl = createEl("button", `clickable-icon ${cssClass}-menu-item`);
-                            setTooltip(buttonEl, tooltip, {
-                                placement: "top",
+                        const createMenuButton = (category: string, cssClass: string, tooltip: string, icon: string) => {
+                            const currentSelection = this.canvas.selection;
+                            const currentSelectionArray = Array.from(currentSelection);
+                            const allFalse = currentSelectionArray.every((value: number) => {
+                                return !value.nodeEl;
                             });
-                            setIcon(buttonEl, icon);
-                            return buttonEl;
+                            if (allFalse) {
+                                if (category === 'edge') {
+                                    if (this.menuEl.querySelector(`.${cssClass}-menu-item`)) return result;
+                                    const buttonEl = createEl("button", `clickable-icon ${cssClass}-menu-item`);
+                                    setTooltip(buttonEl, tooltip, {
+                                        placement: "top",
+                                    });
+                                    setIcon(buttonEl, icon);
+                                    return buttonEl;
+                                }
+                            } else {
+                                if (category !== 'edge') {
+                                    if (this.menuEl.querySelector(`.${cssClass}-menu-item`)) return result;
+                                    const buttonEl = createEl("button", `clickable-icon ${cssClass}-menu-item`);
+                                    setTooltip(buttonEl, tooltip, {
+                                        placement: "top",
+                                    });
+                                    setIcon(buttonEl, icon);
+                                    return buttonEl;
+                                }
+                            }
                         };
 
                         const handleButtonClick = (buttonEl: HTMLElement, clickHandler: () => void) => {
@@ -163,14 +177,14 @@ export default class CanvasStyleMenuPlugin extends Plugin {
                             }
                         };
 
-                        const createAndSetupMenuButton = (cssClass: string, toggleMenu: string[], tooltip: string, icon: string, clickHandler: (menu: Menu, containingNodes: any[]) => void) => {
-                            const buttonEl = createMenuButton(cssClass, tooltip, icon);
+                        const createAndSetupMenuButton = (category: string, cssClass: string, toggleMenu: string[], tooltip: string, icon: string, clickHandler: (menu: Menu, containingNodes: any[]) => void) => {
+                            const buttonEl = createMenuButton(category, cssClass, tooltip, icon);
                             if (buttonEl) {
                                 const toggleMenuItemsClass = getToggleMenuItemsClass(toggleMenu, menuConfig)
+                                const currentSelection = this.canvas.selection;
+                                const containingNodes = this.canvas.getContainingNodes(this.selection.bbox);
+                                const menuItemType = getItemProperty(cssClass, menuConfig, 'type');
                                 if (toggleMenuItemsClass.includes(cssClass)) {
-                                    const currentSelection = this.canvas.selection;
-                                    const containingNodes = this.canvas.getContainingNodes(this.selection.bbox);
-                                    const menuItemType = getMenuItemType(cssClass, menuConfig);
                                     buttonEl.addEventListener("click", () => {
                                         currentSelection.size === 1 
                                         ? handleSingleNode(<CanvasNode>Array.from(currentSelection)?.first(), null, menuItemType, cssClass, false) 
@@ -180,22 +194,22 @@ export default class CanvasStyleMenuPlugin extends Plugin {
                                                 ? handleSingleNode(<CanvasNode>Array.from(currentSelection)?.first(), null, menuItemType, cssClass, false) 
                                                 : ""));
                                     });
-                                    buttonEl.addEventListener("contextmenu", () => {
-                                        currentSelection.size === 1 
-                                        ? handleSingleNode(<CanvasNode>Array.from(currentSelection)?.first(), null, menuItemType, cssClass, true) 
-                                        : (containingNodes.length > 1 
-                                            ? handleMultiNodesViaNodes(this.canvas, containingNodes, null, menuItemType, cssClass, true) 
-                                            : (currentSelection 
-                                                ? handleSingleNode(<CanvasNode>Array.from(currentSelection)?.first(), null, menuItemType, cssClass, true) 
-                                                : ""));
-                                    });
                                 } else buttonEl.addEventListener("click", () => handleButtonClick(buttonEl, clickHandler));
+                                buttonEl.addEventListener("contextmenu", () => {
+                                    currentSelection.size === 1 
+                                    ? handleSingleNode(<CanvasNode>Array.from(currentSelection)?.first(), null, menuItemType, cssClass, true) 
+                                    : (containingNodes.length > 1 
+                                        ? handleMultiNodesViaNodes(this.canvas, containingNodes, null, menuItemType, cssClass, true) 
+                                        : (currentSelection 
+                                            ? handleSingleNode(<CanvasNode>Array.from(currentSelection)?.first(), null, menuItemType, cssClass, true) 
+                                            : ""));
+                                });
                                 this.menuEl.appendChild(buttonEl);
                             }
                         };
 
                         menuConfig.forEach((memuItem) => {
-                            createAndSetupMenuButton(memuItem.class, toggleMenu, memuItem.title, memuItem.icon, (menu, containingNodes) => {
+                            createAndSetupMenuButton(memuItem.cat, memuItem.class, toggleMenu, memuItem.title, memuItem.icon, (menu, containingNodes) => {
                                 handleMenu(menu, subMenuConfig, async (cssClass: string) => {
                                     const currentSelection = this.canvas.selection;
                                     currentSelection.size === 1 
@@ -238,6 +252,8 @@ export default class CanvasStyleMenuPlugin extends Plugin {
         };
 
         const menuConfig = this.menuConfig
+        const subMenuConfig = this.subMenuConfig
+        const allMenuConfig = menuConfig.concat(subMenuConfig)
 
         const patchNode = () => {
             const canvasView = this.app.workspace.getLeavesOfType("canvas").first()?.view;
@@ -247,20 +263,26 @@ export default class CanvasStyleMenuPlugin extends Plugin {
             if (!canvas) return false;
 
             const node = (this.app.workspace.getLeavesOfType("canvas").first()?.view as any).canvas.nodes.values().next().value;
+            const edge = (this.app.workspace.getLeavesOfType("canvas").first()?.view as any).canvas.edges.values().next().value;
+            //console.log("node:", node);
+            //console.log("edge:", edge);
 
             if (!node) return false;
-            let prototype = Object.getPrototypeOf(node);
-            while (prototype && prototype !== Object.prototype) {
-                prototype = Object.getPrototypeOf(prototype);
+            if (!edge) return false;
+            let prototypeNode = Object.getPrototypeOf(node);
+            let prototypeEdge = Object.getPrototypeOf(edge);
+            while (prototypeNode && prototypeNode !== Object.prototype) {
+                prototypeNode = Object.getPrototypeOf(prototypeNode);
                 // @ts-expected-error Find the parent prototype
-                if (prototype.renderZIndex) {
+                if (prototypeNode.renderZIndex) {
                     break;
                 }
             }
 
-            if (!prototype) return false;
+            if (!prototypeNode) return false;
+            if (!prototypeEdge) return false;
 
-            const uninstaller = around(prototype, {
+            const uninstallerNode = around(prototypeNode, {
                 render: (next: any) =>
                     function (...args: any) {
                         const result = next.call(this, ...args);
@@ -271,11 +293,13 @@ export default class CanvasStyleMenuPlugin extends Plugin {
                             acc[item.type] = `unknownData.${item.type}`;
                             return acc;
                         }, {} as { [key: string]: string });
-                        menuConfig.forEach((item) => {
+                        menuConfig.forEach(async (item) => {
                             const propertyKey = typeToPropertyMap[item.type];
                             const propertyValue = new Function(`return this.${propertyKey}`).call(this);
                             if (propertyValue) {
-                                this.nodeEl.classList.add(propertyValue);
+                                if (getItemProperty(propertyValue, allMenuConfig, 'selector') === 'cc') {
+                                    await modifyClassOnElements('add', this.contentEl, 'markdown-preview-view', propertyValue);
+                                } else this.nodeEl.classList.add(propertyValue);
                             }
                         });
 
@@ -290,13 +314,53 @@ export default class CanvasStyleMenuPlugin extends Plugin {
                         menuConfig.forEach((item) => {
                             const propertyKey = typeToPropertyMap[item.type];
                             const propertyValue = data[propertyKey];
-                            this.nodeCSSclass?.setStyle(item.type, propertyValue);
+                            const selector = getItemProperty(propertyValue, allMenuConfig, 'selector');
+                            this.nodeCSSclass?.setStyle(item.cat, selector, item.type, propertyValue);
                         });
 
                         return next.call(this, data);
                     }
             });
-            this.register(uninstaller);
+            const uninstallerEdge = around(prototypeEdge, {
+                render: (next: any) =>
+                    function (...args: any) {
+                        const result = next.call(this, ...args);
+
+                        this.nodeCSSclass = initCanvasStyle(this);
+
+                        const typeToPropertyMap = menuConfig.reduce((acc, item) => {
+                            acc[item.type] = `unknownData.${item.type}`;
+                            return acc;
+                        }, {} as { [key: string]: string });
+                        menuConfig.forEach((item) => {
+                            const propertyKey = typeToPropertyMap[item.type];
+                            const propertyValue = new Function(`return this.${propertyKey}`).call(this);
+                            if (propertyValue) {
+                                this.lineGroupEl.classList.add(propertyValue);
+                                this.lineEndGroupEl.classList.add(propertyValue);
+                            }
+                        });
+
+                        return result;
+                    },
+                setData: (next: any) =>
+                    function (data: any) {
+                        const typeToPropertyMap = menuConfig.reduce((acc, item) => {
+                            acc[item.type] = `${item.type}`;
+                            return acc;
+                        }, {} as { [key: string]: string });
+                        menuConfig.forEach((item) => {
+                            const propertyKey = typeToPropertyMap[item.type];
+                            const propertyValue = data[propertyKey];
+                            const selector = getItemProperty(propertyValue, allMenuConfig, 'selector');
+                            this.nodeCSSclass?.setStyle(item.cat, selector, item.type, propertyValue);
+                        });
+
+                        return next.call(this, data);
+                    }
+            });
+            this.register(uninstallerNode);
+            this.register(uninstallerEdge);
 
             console.log("Canvas-Style-Menu: canvas node patched");
             return true;

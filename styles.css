@@ -3,9 +3,45 @@
   border: none;
   box-shadow: none;
 }
+.canvas-node.cs-border-none.is-themed .canvas-node-container {
+  box-shadow: none;
+}
+.canvas-node.cs-border-none .canvas-node-container:hover {
+  border: 2px dashed rgba(var(--canvas-color), 0.9);
+}
+.canvas-node.cs-border-none.is-selected .canvas-node-container,
+.canvas-node.cs-border-none.is-focused .canvas-node-container {
+  border: 4px dashed var(--background-modifier-border-focus);
+  box-shadow: none;
+}
+.canvas-node.cs-border-none.is-themed.is-selected .canvas-node-container,
+.canvas-node.cs-border-none.is-themed.is-focused .canvas-node-container {
+  border: 4px dashed rgb(var(--canvas-color));
+  box-shadow: none;
+}
 /* cs-border-dashed */
 .canvas-node.cs-border-dashed .canvas-node-container {
   border: 2px dashed rgba(var(--canvas-color), 0.5);
+  box-shadow: none;
+}
+.canvas-node.cs-border-dashed.is-themed .canvas-node-container {
+  border: 2px dashed rgba(var(--canvas-color), 0.5);
+  box-shadow: none;
+}
+.canvas-node.cs-border-dashed .canvas-node-container:hover {
+  border: 2px dashed rgb(var(--canvas-color));
+}
+.canvas-node.cs-border-dashed.is-themed .canvas-node-container:hover {
+  border: 2px dashed rgba(var(--canvas-color), 0.9);
+}
+.canvas-node.cs-border-dashed.is-selected .canvas-node-container,
+.canvas-node.cs-border-dashed.is-focused .canvas-node-container {
+  border: 4px dashed var(--background-modifier-border-focus);
+  box-shadow: none;
+}
+.canvas-node.cs-border-dashed.is-themed.is-selected .canvas-node-container,
+.canvas-node.cs-border-dashed.is-themed.is-focused .canvas-node-container {
+  border: 4px dashed rgb(var(--canvas-color));
   box-shadow: none;
 }
 
@@ -37,8 +73,12 @@
 .canvas-node.cs-rotate-left-90 .canvas-node-container {
   transform: rotate(-90deg);
 }
+
 .canvas-node .canvas-node-label {
   display: none;
+}
+.canvas-node.is-editing .canvas-node-container {
+  transform: rotate(0);
 }
 
 /* cs-highlight */
@@ -54,4 +94,103 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+/* cs-shape-parallelogram-right */
+.canvas-node.cs-shape-parallelogram-right .canvas-node-container {
+  transform: skew(-20deg);
+}
+.canvas-node.cs-shape-parallelogram-right .canvas-node-container .markdown-preview-section {
+  transform: skew(20deg);
+}
+/* cs-shape-parallelogram-left */
+.canvas-node.cs-shape-parallelogram-left .canvas-node-container {
+  transform: skew(20deg);
+}
+.canvas-node.cs-shape-parallelogram-left .canvas-node-container .markdown-preview-section {
+  transform: skew(-20deg);
+}
+
+.canvas-node.cs-shape-parallelogram-right .canvas-node-container .markdown-preview-section,
+.canvas-node.cs-shape-parallelogram-left .canvas-node-container .markdown-preview-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.canvas-node.cs-shape-parallelogram-right.is-editing .canvas-node-container,
+.canvas-node.cs-shape-parallelogram-left.is-editing .canvas-node-container {
+  transform: skew(0);
+}
+
+.canvas-node.is-editing .canvas-node-container {
+  border-radius: var(--radius-m);
+}
+
+/* cs-line-dashed */
+.canvas-edges g.cs-line-dashed {
+  stroke-dasharray: 10;
+}
+
+/* cs-line-dashed-round */
+.canvas-edges g.cs-line-dashed-round {
+  stroke-dasharray: 15;
+  stroke-linecap: round;
+}
+
+/* cs-line-dotted */
+.canvas-edges g.cs-line-dotted {
+  stroke-dasharray: 5;
+}
+
+/* cs-line-dotted-line */
+.canvas-edges g.cs-line-dotted-line {
+  stroke-dasharray: 20 5 5 5; /* double-dotted-line 20 10 5 5 5 10 */
+}
+
+/* cs-line-thick */
+.canvas-edges g.cs-line-thick .canvas-display-path {
+  stroke-width: calc(5.5px * var(--zoom-multiplier));
+}
+.canvas-edges g.cs-line-thick.is-focused path.canvas-display-path, 
+.canvas:not(.is-connecting) .canvas-edges g.cs-line-thick:hover path.canvas-display-path {
+  stroke-width: calc(8px * var(--zoom-multiplier));
+}
+.canvas-edges g.cs-line-thick polygon.canvas-path-end {
+  transform: scale(calc(1.5 * var(--zoom-multiplier)));
+  stroke: unset;
+}
+
+/* cs-line-thicker */
+.canvas-edges g.cs-line-thicker .canvas-display-path {
+  stroke-width: calc(8.5px * var(--zoom-multiplier));
+}
+.canvas-edges g.cs-line-thicker.is-focused path.canvas-display-path, 
+.canvas:not(.is-connecting) .canvas-edges g.cs-line-thicker:hover path.canvas-display-path {
+  stroke-width: calc(11px * var(--zoom-multiplier));
+}
+.canvas-edges g.cs-line-thicker polygon.canvas-path-end {
+  transform: scale(calc(2 * var(--zoom-multiplier)));
+  stroke: unset;
+}
+
+
+
+
+
+
+
+
+
+
+.custom-icons-container .setting-item-name:empty {
+  display: none;
+}
+.custom-icons-container .setting-item-info,
+.custom-icons-container .setting-item-control {
+  flex: 0 0 auto;
+}
+.custom-icons-container .setting-item-control:last-child {
+  flex: 1;
+}
+.custom-icons-container input[type=text][placeholder=svgContent] {
+  width: 100%;
 }

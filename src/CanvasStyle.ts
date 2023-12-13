@@ -1,4 +1,5 @@
 import { CanvasNode, Component } from "obsidian";
+import { modifyClassOnElements } from "./utils";
 
 export default class CanvasStyle extends Component {
     private node: CanvasNode;
@@ -22,11 +23,11 @@ export default class CanvasStyle extends Component {
         super.onunload();
     }
 
-    setStyle(type: string, cssClass: string) {
+    setStyle(cat: string, selector: string, type: string, cssClass: string) {
         if (this.node.canvas.readonly) return;
         if (this[type] === cssClass) return;
 
-        if (this[type] !== ''|| this[type] !== undefined) {
+        if (this[type] !== '' || this[type] !== undefined) {
             this.oldType = this[type];
         }
         if (cssClass !== false || cssClass !== undefined) {
@@ -34,15 +35,30 @@ export default class CanvasStyle extends Component {
             this.node.unknownData[type] = cssClass;
         }
 
-        this.updateNode(type);
+        this.updateNode(cat, selector, type);
     }
 
-    updateNode(type: string) {
+    async updateNode(cat: string, selector: string, type: string) {
         if (this.oldType) {
-            this.node.nodeEl.removeClass(this.oldType);
+            if (cat === 'edge') {
+                this.node.lineGroupEl.removeClass(this.oldType);
+                this.node.lineEndGroupEl.removeClass(this.oldType);
+            } else {
+                try {
+                    this.node.nodeEl.removeClass(this.oldType);
+                    modifyClassOnElements('remove', this.node.contentEl, 'markdown-preview-view', this.oldType);
+                } finally {}
+            }
         }
         if (this[type]) {
-            this.node.nodeEl.addClass(this[type]);
+            if (cat === 'edge') {
+                this.node.lineGroupEl.addClass(this[type]);
+                this.node.lineEndGroupEl.addClass(this[type]);
+            } else {
+                if (selector === 'cc') {
+                    await modifyClassOnElements('add', this.node.contentEl, 'markdown-preview-view', this[type]);
+                } else this.node.nodeEl.addClass(this[type]);
+            }
         }
     }
 }

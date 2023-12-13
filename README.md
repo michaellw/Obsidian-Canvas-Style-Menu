@@ -18,13 +18,18 @@ Once again, thank you for allowing me to use your code!!!
 
 ## Usage
 
-**Obsidian Canvas Style Menu **comes with several simple styles that you can directly use in the style menu. You can also extend or override the default style menu using your own menu configuration and CSS snippets. Simply add your own menu configuration on the plugin settings page. Here's a brief explanation, and detailed documentation will be added later.
+**Obsidian Canvas Style Menu **comes with several simple styles that you can directly use in the style menu, right-clicking on the button allows you to remove the style. You can also extend or override the default style menu using your own menu configuration and CSS snippets. Simply add your own menu configuration on the plugin settings page. Here's a brief explanation, and detailed documentation will be added later.
 
 1. First, add Menu configuration:
 
 ![](./assets/menu_config.jpg)
 
+**Note: The default Menu Config added is for style menus on cards. If you want to add style menus for connection lines, simply add `cat: 'edge'` in the Menu Config.**
+
+![](./assets/connection_line.jpg)
+
 2. Second, add Sub Menu configuration:
+**Note: No need to add `cat: 'edge'` in the Sub Menu Config.**
 
 ![](./assets/submenu_config.jpg)
 
@@ -37,6 +42,24 @@ Once again, thank you for allowing me to use your code!!!
 5. Fifth, congratulations, you can now use the styles you added in the style menu!
 
 **Note:** If your menu does not have sub-menus, the menu button will become a toggle button. Left-click applies the style, and right-click cancels the style.
+
+**Obsidian Canvas Style Menu** supports the optional Obsidian default cssclasses styling method. You can achieve the effect of cssclasses without manually writing cssclasses by simply adding `selector: 'cc'` in your Menu Config.
+
+![](./assets/cssclasses.jpg)
+
+**For [Canvas Candy](https://tfthacker.com/canvas-candy) users, no need to write cssclasses anymore. Simply add the commonly used Canvas Candy cssclasses to the menu configs for easy use.**
+
+**Note: Canvas Candy is a paid product and is not included in Canvas Style Menu. If you wish to use it, please visit [Canvas Candy](https://tfthacker.com/canvas-candy) for more information.**
+
+![](./assets/canvas_candy.jpg)
+
+**Obsidian Canvas Style Menu** supports adding custom icons. On the plugin settings page, scroll to the bottom, enter the icon name and SVG code, then click the add button on the left. **Please restart Obsidian to apply the icon configurations.**
+
+How to get an SVG icon? 
+Taking [Lucide](https://lucide.dev/) icons as an example, find the desired icon, click the "Copy SVG" button, then paste it on the plugin settings page. 
+**Note that the icon must comply with Obsidian's [Icon design guidelines](https://docs.obsidian.md/Plugins/User+interface/Icons#Icon+design+guidelines)**.
+
+![](./assets/custom_icon.jpg)
 
 ## Installation
 
