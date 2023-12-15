@@ -83,10 +83,17 @@ export default class CanvasStyleMenuSettingTab extends PluginSettingTab {
         this.buildNewIconSetting(this.customIconsContainerEl, (icon) => {
             this.plugin.settings.customIcons.push(icon);
             this.plugin.saveSettings();
+            this.plugin.registerCustomIcons();
 
             // Re-draw.
             this.display();
         });
+    }
+
+    async hide(): void {
+        await this.plugin.refreshSetting();
+        this.plugin.patchCanvasMenu();
+        this.plugin.patchCanvasNode();
     }
 
     renderCustomIconsSetting(containerEl: HTMLElement, icon: Icon) {
@@ -111,6 +118,8 @@ export default class CanvasStyleMenuSettingTab extends PluginSettingTab {
                 .onChange(async (value) => {
                     this.plugin.settings.customIcons[index].svgContent = `${value}`;
                     await this.plugin.saveSettings();
+                    this.plugin.registerCustomIcons();
+                    this.display();
                 }))
             .addExtraButton((component) =>
                 component

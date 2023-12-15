@@ -55,13 +55,17 @@ export default class CanvasStyleMenuPlugin extends Plugin {
     subMenuConfig: SubMenuItem[];
     toggleMenu: string[];
 
-    async onload() {
+    async refreshSetting() {
         await this.loadSettings();
         this.menuConfig = toObjectArray(this.settings.menuItems);
         this.subMenuConfig = toObjectArray(this.settings.subMenuItems);
         const menuTypes = this.menuConfig.map(item => item.type);
         const subMenuTypes = this.subMenuConfig.map(item => item.type);
         this.toggleMenu = menuTypes.filter(type => !subMenuTypes.includes(type));
+    }
+
+    async onload() {
+        await this.refreshSetting();
 
         this.registerCanvasEvents();
         this.registerCustomIcons();
@@ -128,6 +132,15 @@ export default class CanvasStyleMenuPlugin extends Plugin {
                 render: (next: any) =>
                     function (...args: any) {
                         const result = next.call(this, ...args);
+
+                        const menuClasses = menuConfig.map(item => item.class)
+                        const oldMenuItems = this.menuEl.querySelectorAll('.clickable-icon[class$=-menu-item]');
+                        oldMenuItems.forEach(item => {
+                            const itemClass = item.className.match(/\b(\w+)-menu-item\b/)[1];
+                            if (!menuClasses.includes(itemClass)) {
+                                item.remove()
+                            }
+                        })
 
                         const createMenuButton = (category: string, cssClass: string, tooltip: string, icon: string) => {
                             const currentSelection = this.canvas.selection;

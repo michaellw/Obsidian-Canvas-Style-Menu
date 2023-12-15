@@ -34,13 +34,11 @@
 
 ![](./assets/submenu_config.jpg)
 
-第三步，**重要！！！当您修改完Menu Config或者Sub Menu Config，请重启obsidian以使配置生效。**
-
-第四步，添加您自己的css片段，其中每个样式的类名称需要跟您的菜单配置中的类名称对应上：
+第三步，添加您自己的css片段，其中每个样式的类名称需要跟您的菜单配置中的类名称对应上：
 
 ![](./assets/css_config.jpg)
 
-第五步，恭喜，您可以在样式菜单中使用您添加的样式了！
+第四步，恭喜，您可以在样式菜单中使用您添加的样式了！
 
 **注意：**如果您的按钮没有子菜单的话，那么按钮将会变成一个开关按钮，左键点击应用样式，右键点击取消样式。
 
@@ -54,7 +52,7 @@
 
 ![](./assets/canvas_candy.jpg)
 
-**Obsidian Canvas Style Menu**支持添加自定义图标，在插件设置页面，拖动到最下面，输入图标名称和svg代码，然后点击左侧添加按钮。**请重启obsidian以使图标配置生效。**
+**Obsidian Canvas Style Menu**支持添加自定义图标，在插件设置页面，拖动到最下面，输入图标名称和svg代码，然后点击左侧添加按钮。
 
 如何获取svg图标？
 以[Lucide]([Lucide | Lucide](https://lucide.dev/))图标为例，找到想要的图标，点击`Copy SVG`按钮，然后在插件设置页面粘贴即可。

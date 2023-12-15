@@ -33,13 +33,11 @@ Once again, thank you for allowing me to use your code!!!
 
 ![](./assets/submenu_config.jpg)
 
-3. Third **Important!!! After modifying Menu Config or Sub Menu Config, restart Obsidian to apply the configuration.**
-
-4. Fourth, add your own CSS snippets, where the class names for each style should correspond to the class names in your menu configuration:
+3. Third, add your own CSS snippets, where the class names for each style should correspond to the class names in your menu configuration:
 
 ![](./assets/css_config.jpg)
 
-5. Fifth, congratulations, you can now use the styles you added in the style menu!
+4. Fourth, congratulations, you can now use the styles you added in the style menu!
 
 **Note:** If your menu does not have sub-menus, the menu button will become a toggle button. Left-click applies the style, and right-click cancels the style.
 
@@ -53,7 +51,7 @@ Once again, thank you for allowing me to use your code!!!
 
 ![](./assets/canvas_candy.jpg)
 
-**Obsidian Canvas Style Menu** supports adding custom icons. On the plugin settings page, scroll to the bottom, enter the icon name and SVG code, then click the add button on the left. **Please restart Obsidian to apply the icon configurations.**
+**Obsidian Canvas Style Menu** supports adding custom icons. On the plugin settings page, scroll to the bottom, enter the icon name and SVG code, then click the add button on the left.
 
 How to get an SVG icon? 
 Taking [Lucide](https://lucide.dev/) icons as an example, find the desired icon, click the "Copy SVG" button, then paste it on the plugin settings page. 
