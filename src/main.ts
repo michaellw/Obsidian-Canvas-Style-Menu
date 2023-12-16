@@ -276,14 +276,10 @@ export default class CanvasStyleMenuPlugin extends Plugin {
             if (!canvas) return false;
 
             const node = (this.app.workspace.getLeavesOfType("canvas").first()?.view as any).canvas.nodes.values().next().value;
-            const edge = (this.app.workspace.getLeavesOfType("canvas").first()?.view as any).canvas.edges.values().next().value;
-            //console.log("node:", node);
-            //console.log("edge:", edge);
 
             if (!node) return false;
-            if (!edge) return false;
             let prototypeNode = Object.getPrototypeOf(node);
-            let prototypeEdge = Object.getPrototypeOf(edge);
+            
             while (prototypeNode && prototypeNode !== Object.prototype) {
                 prototypeNode = Object.getPrototypeOf(prototypeNode);
                 // @ts-expected-error Find the parent prototype
@@ -293,7 +289,6 @@ export default class CanvasStyleMenuPlugin extends Plugin {
             }
 
             if (!prototypeNode) return false;
-            if (!prototypeEdge) return false;
 
             const uninstallerNode = around(prototypeNode, {
                 render: (next: any) =>
@@ -334,46 +329,58 @@ export default class CanvasStyleMenuPlugin extends Plugin {
                         return next.call(this, data);
                     }
             });
-            const uninstallerEdge = around(prototypeEdge, {
-                render: (next: any) =>
-                    function (...args: any) {
-                        const result = next.call(this, ...args);
 
-                        this.nodeCSSclass = initCanvasStyle(this);
-
-                        const typeToPropertyMap = menuConfig.reduce((acc, item) => {
-                            acc[item.type] = `unknownData.${item.type}`;
-                            return acc;
-                        }, {} as { [key: string]: string });
-                        menuConfig.forEach((item) => {
-                            const propertyKey = typeToPropertyMap[item.type];
-                            const propertyValue = new Function(`return this.${propertyKey}`).call(this);
-                            if (propertyValue) {
-                                this.lineGroupEl.classList.add(propertyValue);
-                                this.lineEndGroupEl.classList.add(propertyValue);
-                            }
-                        });
-
-                        return result;
-                    },
-                setData: (next: any) =>
-                    function (data: any) {
-                        const typeToPropertyMap = menuConfig.reduce((acc, item) => {
-                            acc[item.type] = `${item.type}`;
-                            return acc;
-                        }, {} as { [key: string]: string });
-                        menuConfig.forEach((item) => {
-                            const propertyKey = typeToPropertyMap[item.type];
-                            const propertyValue = data[propertyKey];
-                            const selector = getItemProperty(propertyValue, allMenuConfig, 'selector');
-                            this.nodeCSSclass?.setStyle(item.cat, selector, item.type, propertyValue);
-                        });
-
-                        return next.call(this, data);
-                    }
-            });
             this.register(uninstallerNode);
-            this.register(uninstallerEdge);
+
+            const edge = (this.app.workspace.getLeavesOfType("canvas").first()?.view as any).canvas.edges.values().next().value;
+
+            if (edge) {
+                let prototypeEdge = Object.getPrototypeOf(edge);
+                if (!prototypeEdge) {
+                    return false;
+                } else {
+                    const uninstallerEdge = around(prototypeEdge, {
+                        render: (next: any) =>
+                            function (...args: any) {
+                                const result = next.call(this, ...args);
+
+                                this.nodeCSSclass = initCanvasStyle(this);
+
+                                const typeToPropertyMap = menuConfig.reduce((acc, item) => {
+                                    acc[item.type] = `unknownData.${item.type}`;
+                                    return acc;
+                                }, {} as { [key: string]: string });
+                                menuConfig.forEach((item) => {
+                                    const propertyKey = typeToPropertyMap[item.type];
+                                    const propertyValue = new Function(`return this.${propertyKey}`).call(this);
+                                    if (propertyValue) {
+                                        this.lineGroupEl.classList.add(propertyValue);
+                                        this.lineEndGroupEl.classList.add(propertyValue);
+                                    }
+                                });
+
+                                return result;
+                            },
+                        setData: (next: any) =>
+                            function (data: any) {
+                                const typeToPropertyMap = menuConfig.reduce((acc, item) => {
+                                    acc[item.type] = `${item.type}`;
+                                    return acc;
+                                }, {} as { [key: string]: string });
+                                menuConfig.forEach((item) => {
+                                    const propertyKey = typeToPropertyMap[item.type];
+                                    const propertyValue = data[propertyKey];
+                                    const selector = getItemProperty(propertyValue, allMenuConfig, 'selector');
+                                    this.nodeCSSclass?.setStyle(item.cat, selector, item.type, propertyValue);
+                                });
+
+                                return next.call(this, data);
+                            }
+                    });
+
+                    this.register(uninstallerEdge);
+                }
+            }
 
             console.log("Canvas-Style-Menu: canvas node patched");
             return true;
