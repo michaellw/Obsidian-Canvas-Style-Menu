@@ -94,6 +94,10 @@ export default class CanvasStyleMenuPlugin extends Plugin {
         this.registerEvent(this.app.workspace.on("canvas-style-menu:patched-canvas", () => {
             refreshAllCanvasView(this.app);
         }));
+        this.registerEvent(this.app.workspace.on("canvas-style-menu:patched-node", () => {
+            this.patchCanvasNode();
+            refreshAllCanvasView(this.app);
+        }));
         this.registerEvent(this.app.workspace.on("canvas:selection-menu", (menu, canvas) => {
             handleSelectionContextMenu(this, menu, canvas, this.menuConfig, this.subMenuConfig, this.toggleMenu);
         }));
@@ -113,6 +117,8 @@ export default class CanvasStyleMenuPlugin extends Plugin {
     }
 
     patchCanvasMenu() {
+        let [nodePatched, edgePatched] = this.patchCanvasNode();
+        let groupPatched = nodePatched;
         const patchMenu = () => {
             const canvasView = this.app.workspace.getLeavesOfType("canvas").first()?.view;
             if (!canvasView) return false;
@@ -132,6 +138,32 @@ export default class CanvasStyleMenuPlugin extends Plugin {
                 render: (next: any) =>
                     function (...args: any) {
                         const result = next.call(this, ...args);
+
+                        if (!nodePatched) {
+                            if (this.canvas.nodes.size > 0) {
+                                this.canvas.app.workspace.trigger("canvas-style-menu:patched-node");
+                                nodePatched = true;
+                            }
+                        }
+
+                        const nodes = this.canvas.nodes.values();
+                        if (!groupPatched) {
+                            for (const node of nodes) {
+                                if (node?.text === undefined) {
+                                    this.canvas.app.workspace.trigger("canvas-style-menu:patched-node");
+                                    groupPatched = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        const edge = this.canvas.edges.values().next().value;
+                        if (!edgePatched) {
+                            if (this.canvas.edges.size > 0 && edge?.unknownData?.id) {
+                                this.canvas.app.workspace.trigger("canvas-style-menu:patched-node");
+                                edgePatched = true;
+                            }
+                        }
 
                         const menuClasses = menuConfig.map(item => item.class)
                         const oldMenuItems = this.menuEl.querySelectorAll('.clickable-icon[class$=-menu-item]');
@@ -275,7 +307,14 @@ export default class CanvasStyleMenuPlugin extends Plugin {
             const canvas: Canvas = (canvasView as CanvasView)?.canvas;
             if (!canvas) return false;
 
-            const node = (this.app.workspace.getLeavesOfType("canvas").first()?.view as any).canvas.nodes.values().next().value;
+            let node = (this.app.workspace.getLeavesOfType("canvas").first()?.view as any).canvas.nodes.values().next().value;
+            const nodes = (this.app.workspace.getLeavesOfType("canvas").first()?.view as any).canvas.nodes.values();
+
+            for (const group of nodes) {
+                if (group?.text === undefined) {
+                    node = group
+                }
+            }
 
             if (!node) return false;
             let prototypeNode = Object.getPrototypeOf(node);
@@ -332,64 +371,82 @@ export default class CanvasStyleMenuPlugin extends Plugin {
 
             this.register(uninstallerNode);
 
-            const edge = (this.app.workspace.getLeavesOfType("canvas").first()?.view as any).canvas.edges.values().next().value;
-
-            if (edge) {
-                let prototypeEdge = Object.getPrototypeOf(edge);
-                if (!prototypeEdge) {
-                    return false;
-                } else {
-                    const uninstallerEdge = around(prototypeEdge, {
-                        render: (next: any) =>
-                            function (...args: any) {
-                                const result = next.call(this, ...args);
-
-                                this.nodeCSSclass = initCanvasStyle(this);
-
-                                const typeToPropertyMap = menuConfig.reduce((acc, item) => {
-                                    acc[item.type] = `unknownData.${item.type}`;
-                                    return acc;
-                                }, {} as { [key: string]: string });
-                                menuConfig.forEach((item) => {
-                                    const propertyKey = typeToPropertyMap[item.type];
-                                    const propertyValue = new Function(`return this.${propertyKey}`).call(this);
-                                    if (propertyValue) {
-                                        this.lineGroupEl.classList.add(propertyValue);
-                                        this.lineEndGroupEl.classList.add(propertyValue);
-                                    }
-                                });
-
-                                return result;
-                            },
-                        setData: (next: any) =>
-                            function (data: any) {
-                                const typeToPropertyMap = menuConfig.reduce((acc, item) => {
-                                    acc[item.type] = `${item.type}`;
-                                    return acc;
-                                }, {} as { [key: string]: string });
-                                menuConfig.forEach((item) => {
-                                    const propertyKey = typeToPropertyMap[item.type];
-                                    const propertyValue = data[propertyKey];
-                                    const selector = getItemProperty(propertyValue, allMenuConfig, 'selector');
-                                    this.nodeCSSclass?.setStyle(item.cat, selector, item.type, propertyValue);
-                                });
-
-                                return next.call(this, data);
-                            }
-                    });
-
-                    this.register(uninstallerEdge);
-                }
-            }
-
             console.log("Canvas-Style-Menu: canvas node patched");
             return true;
         };
+
+        const patchEdge = () => {
+            const canvasView = this.app.workspace.getLeavesOfType("canvas").first()?.view;
+            if (!canvasView) return false;
+
+            const canvas: Canvas = (canvasView as CanvasView)?.canvas;
+            if (!canvas) return false;
+
+            const edge = (this.app.workspace.getLeavesOfType("canvas").first()?.view as any).canvas.edges.values().next().value;
+
+            if (!edge) return false;
+            let prototypeEdge = Object.getPrototypeOf(edge);
+            if (!prototypeEdge) {
+                return false;
+            } else {
+                const uninstallerEdge = around(prototypeEdge, {
+                    render: (next: any) =>
+                        function (...args: any) {
+                            const result = next.call(this, ...args);
+
+                            this.nodeCSSclass = initCanvasStyle(this);
+
+                            const typeToPropertyMap = menuConfig.reduce((acc, item) => {
+                                acc[item.type] = `unknownData.${item.type}`;
+                                return acc;
+                            }, {} as { [key: string]: string });
+                            menuConfig.forEach((item) => {
+                                const propertyKey = typeToPropertyMap[item.type];
+                                const propertyValue = new Function(`return this.${propertyKey}`).call(this);
+                                if (propertyValue) {
+                                    this.lineGroupEl.classList.add(propertyValue);
+                                    this.lineEndGroupEl.classList.add(propertyValue);
+                                }
+                            });
+
+                            return result;
+                        },
+                    setData: (next: any) =>
+                        function (data: any) {
+                            const typeToPropertyMap = menuConfig.reduce((acc, item) => {
+                                acc[item.type] = `${item.type}`;
+                                return acc;
+                            }, {} as { [key: string]: string });
+                            menuConfig.forEach((item) => {
+                                const propertyKey = typeToPropertyMap[item.type];
+                                const propertyValue = data[propertyKey];
+                                const selector = getItemProperty(propertyValue, allMenuConfig, 'selector');
+                                this.nodeCSSclass?.setStyle(item.cat, selector, item.type, propertyValue);
+                            });
+
+                            return next.call(this, data);
+                        }
+                });
+
+                this.register(uninstallerEdge);
+            }
+
+            console.log("Canvas-Style-Menu: canvas edge patched");
+            return true;
+        };
+
+        return [patchNode(), patchEdge()];
 
         this.app.workspace.onLayoutReady(() => {
             if (!patchNode()) {
                 const evt = this.app.workspace.on("layout-change", () => {
                     patchNode() && this.app.workspace.offref(evt);
+                });
+                this.registerEvent(evt);
+            }
+            if (!patchEdge()) {
+                const evt = this.app.workspace.on("layout-change", () => {
+                    patchEdge() && this.app.workspace.offref(evt);
                 });
                 this.registerEvent(evt);
             }

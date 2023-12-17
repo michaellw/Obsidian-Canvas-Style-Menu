@@ -1,6 +1,6 @@
 {
   "name": "canvas-style-menu",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Customize canvas styles seamlessly through the canvas menu and support styles extension using CSS snippets.",
   "main": "main.js",
   "scripts": {
