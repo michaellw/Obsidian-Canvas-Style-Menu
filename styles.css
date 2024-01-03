@@ -156,7 +156,6 @@
 }
 .canvas-edges g.cs-line-thick polygon.canvas-path-end {
   transform: scale(calc(1.5 * var(--zoom-multiplier)));
-  stroke: unset;
 }
 
 /* cs-line-thicker */
@@ -169,28 +168,281 @@
 }
 .canvas-edges g.cs-line-thicker polygon.canvas-path-end {
   transform: scale(calc(2 * var(--zoom-multiplier)));
+}
+
+.canvas-edges path.canvas-path-end,
+.canvas-edges polygon.canvas-path-end {
   stroke: unset;
 }
 
 
 
 
+/* for plugings */
+.menu-items-tab-container .clickable-icon:empty,
+.custom-icons-tab-container .clickable-icon:empty {
+  width: 26px;
+  height: 26px;
+}
+.settings-header-container input[type='text'] {
+  width: 135px;
+}
+
+.config-tab-container .setting-item {
+  padding-top: 0.75em;
+}
+
+.config-tab-container .menu-items-tab::after {
+  content: attr(data-label);
+  padding: var(--size-4-1);
+}
+.config-tab-container .custom-icons-tab::after {
+  content: attr(data-label);
+  padding: var(--size-4-1);
+}
+
+.custom-icons-container input[type='text'],
+.menu-items-container input[type='text'] {
+  width: 110px;
+  border: none;
+  padding: var(--size-4-1) var(--size-2-2);
+  background-color: transparent;
+}
+.menu-items-container .setting-edge-check::after {
+  content: attr(data-label);
+}
+.menu-items-container .setting-cc-check::after {
+  content: attr(data-label);
+}
+
+.menu-items-tab-container .setting-item.mod-toggle {
+  flex-wrap: wrap;
+}
+.submenu-items-container {
+  background-color: var(--background-primary-alt);
+  flex-basis: 100%;
+  flex-grow: 1;
+}
+.menu-items-container .setting-item-control {
+  flex-basis: 100%;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+.custom-icons-container {
+  display: flex;
+  flex-direction: column;
+}
+.custom-icons-container .setting-item {
+  flex-wrap: wrap;
+}
+.custom-icons-container .setting-item-control {
+  flex-basis: 100%;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+.custom-icons-container input[type=text][placeholder='SVG Content'] {
+  width: 100%;
+}
+.config-tab-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.config-tab-container .setting-item {
+  flex-wrap: wrap;
+}
+.config-tab-container .setting-item-control {
+  flex-basis: 100%;
+  flex-grow: 1;
+  justify-content: flex-start;
+}
 
 
+.submenu-items-container .setting-item {
+  padding: 0.45em 0;
+}
+.setting-item.mod-toggle:has(.setting-expanded-true) .setting-item-control {
+  padding-bottom: 0.75em;
+}
+.setting-item.mod-toggle:has(.setting-expanded-true) .submenu-items-container .setting-item-control {
+  padding: 0;
+}
 
-
-
-
-.custom-icons-container .setting-item-name:empty {
+.submenu-items-container .setting-item.mod-toggle {
+  border-top: none;
+}
+.setting-item.mod-toggle:has(.setting-expanded-false) .submenu-items-container {
   display: none;
 }
-.custom-icons-container .setting-item-info,
-.custom-icons-container .setting-item-control {
-  flex: 0 0 auto;
+.setting-expanded-true.nosub,
+.setting-expanded-false.nosub {
+  visibility: hidden;
 }
-.custom-icons-container .setting-item-control:last-child {
-  flex: 1;
+.setting-item.mod-toggle:has(.nosub) .setting-ctxmenu-check {
+  pointer-events: none;
 }
-.custom-icons-container input[type=text][placeholder=svgContent] {
-  width: 100%;
+.submenu-items-container .setting-item-control > *:first-child {
+  visibility: hidden;
+}
+.add-setting .clickable-icon.mod-cta {
+  visibility: visible;
+}
+
+
+.menu-items-tab-container .hidden {
+  visibility: hidden;
+}
+.settings-header-container .disabled,
+.menu-items-tab-container .disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.settings-header-container .disabled svg {
+  opacity: 0.5;
+}
+
+.menu-items-tab-container .setting-item-controller {
+  opacity: 0.5;
+}
+.add-setting .clickable-icon.mod-cta {
+  background-color: var(--interactive-accent);
+}
+.add-setting .clickable-icon.mod-cta:hover {
+  background-color: var(--interactive-accent-hover);
+}
+.add-setting .clickable-icon.mod-cta svg {
+  stroke: var(--text-on-accent);
+  stroke-width: 2.5;
+}
+
+.new-menu-item-setting-container,
+.new-submenu-item-setting-container,
+.new-custom-icon-setting-container,
+.menu-items-tab-container,
+.custom-icons-tab-container,
+.cs-icons-container,
+.builtin-icons-container {
+  display: none;
+}
+.actived {
+  display: inherit;
+}
+.config-tab-container .clickable-icon.actived,
+.icon-list-container .clickable-icon.actived {
+  background-color: var(--background-modifier-hover);
+}
+
+.new-menu-item-setting-container .setting-item {
+  padding: 0.45em 0;
+}
+.add-setting {
+  display: inline;
+}
+.add-setting input[type='text'] {
+  border: var(--input-border-width) dashed var(--background-modifier-border);
+}
+.add-setting input[type='text']:focus {
+  border: none;
+}
+.icon-selector {
+  border: var(--input-border-width) dashed var(--background-modifier-border);
+}
+
+.setting-edge-check svg {
+  opacity: 0.5;
+}
+.setting-edge-checked {
+  background-color: var(--interactive-accent);
+}
+.setting-edge-checked:hover {
+  background-color: var(--interactive-accent-hover);
+}
+.setting-edge-checked svg {
+  stroke: var(--text-on-accent);
+  stroke-width: 2.5;
+}
+.new-menu-item-setting-container.add-setting .setting-edge-check svg {
+  opacity: unset;
+}
+.new-menu-item-setting-container.add-setting .setting-edge-check.disabled svg {
+  opacity: 0.5;
+}
+
+.setting-cc-check svg {
+  opacity: 0.5;
+}
+.setting-cc-checked {
+  background-color: var(--interactive-accent);
+}
+.setting-cc-checked:hover {
+  background-color: var(--interactive-accent-hover);
+}
+.setting-cc-checked svg {
+  stroke: var(--text-on-accent);
+  stroke-width: 2.5;
+}
+.new-menu-item-setting-container.add-setting .setting-cc-check svg {
+  opacity: unset;
+}
+.new-menu-item-setting-container.add-setting .setting-cc-check.disabled svg {
+  opacity: 0.5;
+}
+
+.setting-ctxmenu-check {
+  opacity: 0.5;
+}
+.setting-ctxmenu-check svg {
+  opacity: unset;
+}
+.setting-ctxmenu-check.nosub svg,
+.setting-ctxmenu-check.disabled svg {
+  opacity: 0.5;
+}
+.setting-ctxmenu-checked {
+  background-color: var(--interactive-accent);
+}
+.setting-ctxmenu-checked:hover {
+  background-color: var(--interactive-accent-hover);
+}
+.setting-ctxmenu-checked svg {
+  stroke: var(--text-on-accent);
+  stroke-width: 2.5;
+}
+.setting-editor-extra-setting-button.mod-warning svg {
+  opacity: 0.5;
+}
+.setting-editor-extra-setting-button.mod-warning:hover {
+  background-color: var(--background-modifier-error);
+}
+.setting-editor-extra-setting-button.mod-warning:hover svg {
+  opacity: unset;
+  stroke: var(--text-on-accent);
+}
+
+.cs-icons-container,
+.builtin-icons-container {
+  flex-wrap: wrap;
+  gap: 4px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-grow: 1;
+  align-items: flex-start;
+  align-content: flex-start;
+  justify-content: flex-start;
+}
+.cs-icons-container.actived,
+.builtin-icons-container.actived {
+  display: flex;
+}
+.icon-list-container {
+  display: flex;
+  align-items: center;
+  padding: 0.75em 0;
+  gap: var(--size-4-2);
+}
+.icon-list-container .icon-list-name {
+  padding-left: var(--size-4-1);
+}
+.modal:has(.icon-list-container) {
+  height: var(--dialog-width);
 }

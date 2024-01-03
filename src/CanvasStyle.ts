@@ -8,7 +8,7 @@ export default class CanvasStyle extends Component {
         super();
 
         this.node = node;
-        this.types = menuConfig.map((config) => config.type);
+        this.types = menuConfig.map((menuItem) => menuItem.type);
 
         this.types.forEach((type) => {
             this[type] = this.node.unknownData[type] || '';
@@ -43,6 +43,7 @@ export default class CanvasStyle extends Component {
             if (cat === 'edge') {
                 this.node.lineGroupEl.removeClass(this.oldType);
                 this.node.lineEndGroupEl.removeClass(this.oldType);
+                this.node.render()
             } else {
                 try {
                     this.node.nodeEl.removeClass(this.oldType);
@@ -54,6 +55,7 @@ export default class CanvasStyle extends Component {
             if (cat === 'edge') {
                 this.node.lineGroupEl.addClass(this[type]);
                 this.node.lineEndGroupEl.addClass(this[type]);
+                this.node.render()
             } else {
                 if (selector === 'cc') {
                     await modifyClassOnElements('add', this.node.contentEl, 'markdown-preview-view', this[type]);

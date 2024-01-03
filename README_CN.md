@@ -72,3 +72,9 @@
 4. 重启 obsidian（不要同时重启，必须刷新插件列表），在设置界面启用
    插件
 5. 搞定!
+
+## 向我表达感谢
+
+如果您觉得 Obsidian-Canvas-Style-Menu 很有用，帮到了您，您可以考虑给我买杯咖啡：[https://www.buymeacoffee.com/michaellw](https://www.buymeacoffee.com/michaellw).
+
+<a href="https://www.buymeacoffee.com/michaellw"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=michaellw&button_colour=FFDD00&font_colour=000000&font_family=Comic&outline_colour=000000&coffee_colour=ffffff" /></a>

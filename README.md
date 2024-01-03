@@ -72,3 +72,9 @@ Taking [Lucide](https://lucide.dev/) icons as an example, find the desired icon,
 4. Restart obsidian (do not restart also, you have to refresh plugin list), in the settings interface to enable the
    plugin
 5. Done!
+
+## Say Thank You
+
+If you are enjoy using Obsidian-Canvas-Style-Menu then please support my work and enthusiasm by buying me a coffee on [https://www.buymeacoffee.com/michaellw](https://www.buymeacoffee.com/michaellw).
+
+<a href="https://www.buymeacoffee.com/michaellw"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=michaellw&button_colour=FFDD00&font_colour=000000&font_family=Comic&outline_colour=000000&coffee_colour=ffffff" /></a>
